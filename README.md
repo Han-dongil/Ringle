@@ -7,3 +7,4 @@ password :1234 <br>
 /api/v1/student로 시작하는 api는 학생만 사용이 가능합니다. <br>
 /api/v1/tutor로 시작하는 api는 튜터만 사용이 가능합니다. <br>
 로그인이 되지않은 상태에서는 /api/v1/login api만 사용이 가능합니다. <br>
+프로젝트 실행후 http://localhost:18089 로 요청시 스웨거 ui 로 연결이 가능합니다. 
