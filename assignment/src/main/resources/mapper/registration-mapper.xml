@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.module.registration.mapper.RegistrationMapper">
+
+	<insert id="registrationClass" parameterType="com.example.demo.module.registration.dto.RegistrationDto">
+		INSERT INTO registration_class
+		(
+			student_no,
+			class_no
+		)VALUES(
+			#{studentNo},
+			#{classNo}
+		)
+	
+	</insert>
+	
+</mapper>	 

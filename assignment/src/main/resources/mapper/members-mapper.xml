@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.module.members.mapper.MembersMapper">
+
+	
+	<select id="getMember" parameterType="com.example.demo.module.members.dto.MemberDto" resultType="com.example.demo.module.members.dto.MemberDto">
+		SELECT *
+		FROM members
+		WHERE member_id = #{memberId}
+	</select>
+	
+	<select id="getTutor" parameterType="com.example.demo.module.classes.dto.ClassDto" resultType="com.example.demo.module.classes.dto.TutorDto">
+		SELECT m.member_id tutorId, m.member_name tutorName, ci.start_time , ci.end_time , ci.class_name  , TIMESTAMPDIFF(MINUTE, ci.start_time, ci.end_time) classTime
+		FROM members m
+		RIGHT JOIN class_info ci
+		ON m.member_no = ci.tutor_no
+		WHERE m.role ='tutor'
+		AND TIME(ci.start_time) &lt; TIME(#{endTime})  
+		AND TIME(ci.end_time) > TIME(#{startTime})
+		AND TIMESTAMPDIFF(MINUTE, start_time, end_time) = #{classTime}		
+		ORDER BY ci.start_time desc
+	</select>
+	
+</mapper>	 

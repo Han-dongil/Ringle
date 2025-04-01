@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.module.classes.mapper.ClassMapper">
+
+	<insert id="createClass" parameterType="com.example.demo.module.classes.dto.ClassDto">
+		INSERT INTO class_info
+		(
+			start_time,
+			end_time,
+			tutor_no,
+			class_name
+		)VALUES(
+			#{startTime},
+			#{endTime},
+			(SELECT member_no FROM members WHERE member_id = #{tutorId}),
+			#{className}
+		)
+	</insert>
+	
+	<select id="availableTime" parameterType="com.example.demo.module.classes.dto.ClassDto" resultType="com.example.demo.module.classes.dto.ClassDto">
+		SELECT * , TIMESTAMPDIFF(MINUTE, start_time, end_time) classTime
+		FROM class_info
+		WHERE 1=1
+		<if test='startTime!=null and startTime !="" and endTime!=null and endTime !=""'> 
+			AND NOT (
+			    end_time &lt;= #{startTime} 
+			    OR start_time >= #{endTime}
+			)
+		</if>
+		<if test='tutorId != null and tutorId != ""'>
+			AND tutor_no = (SELECT member_no FROM members WHERE member_id = #{tutorId})
+		</if>
+		<if test='tutorId == null or tutorId == ""'>
+			AND start_time >= now()
+		</if>
+		<if test="classTime != null and classTime !=0">
+			AND TIMESTAMPDIFF(MINUTE, start_time, end_time) = #{classTime}
+		</if>
+		ORDER BY end_time desc
+	</select>
+	
+	<delete id="deleteClassByClassNo" parameterType="Integer">
+		DELETE 
+		FROM class_info
+		WHERE class_no = #{classNo}
+	</delete>
+	
+	<select id="classByStudentId" parameterType="com.example.demo.module.members.dto.MemberDto" resultType="com.example.demo.module.classes.dto.ResultClassDto">
+		SELECT class_name , m.member_name tutorName , ci.start_time , ci.end_time , ci.class_name   , TIMESTAMPDIFF(MINUTE, start_time, end_time) classTime
+		FROM registration_class rc
+		LEFT JOIN class_info ci
+		ON rc.class_no = ci.class_no
+		LEFT JOIN members m
+		ON ci.tutor_no = m.member_no
+		WHERE rc.student_no = (SELECT member_no FROM members WHERE member_id = #{memberId})
+		ORDER BY end_time desc
+	</select>
+	
+</mapper>	 
